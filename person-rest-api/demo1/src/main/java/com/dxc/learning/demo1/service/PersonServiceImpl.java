@@ -19,14 +19,7 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public void deletePerson(int id) {
-        Person Person = getPersonId(id).orElseThrow();
-        PersonRepository.delete(Person);
-    }
-
-    @Override
     public List<Person> getAllPerson() {
-        // TODO Auto-generated method stub
         return PersonRepository.findAll();
     }
 
@@ -38,6 +31,12 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public Person updatePerson(int id) {
         return PersonRepository.getById(id);
+    }
+
+    @Override
+    public void deletePerson(int id) {
+        Person Person = getPersonId(id).orElseThrow();
+        PersonRepository.delete(Person);
     }
 
 }

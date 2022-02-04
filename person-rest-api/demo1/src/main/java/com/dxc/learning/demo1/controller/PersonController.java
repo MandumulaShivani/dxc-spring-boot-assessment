@@ -1,13 +1,14 @@
 package com.dxc.learning.demo1.controller;
 
-import java.time.LocalDate;
 import java.util.List;
-
+import javax.validation.Valid;
 import com.dxc.learning.demo1.dto.PersonDto;
 import com.dxc.learning.demo1.model.Person;
 import com.dxc.learning.demo1.repository.PersonRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,13 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class PersonController {
 
     @Autowired
-    private static final ModelMapper modelMapper = new ModelMapper();
+    private ModelMapper modelMapper;
 
-    public void checkExamMapping() {
-        PersonDto creation = new PersonDto();
-        creation.setName("name");
-        creation.setEmail("email");
-}
     @Autowired
     private final PersonRepository repository;
 
@@ -37,19 +33,23 @@ public class PersonController {
         this.repository = repository;
     }
 
+    @PostMapping({"","/"})
+    public ResponseEntity<PersonDto> postMethodName(@Valid @RequestBody PersonDto personDto){
+        Person person = modelMapper.map(personDto, Person.class);
+        return ResponseEntity.ok(personDto);
+    }
+
     @GetMapping("/person")
+    public ResponseEntity<Person> getPersonById(@PathVariable Person person){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    @GetMapping({"","/"})
     List<Person> all() {
         return repository.findAll();
     }
 
-    @GetMapping("/person/{id}")
-    Person one(@PathVariable Integer id) {
-
-        return repository.findById(id)
-                .orElseThrow(() -> new PersonNotFoundException(id));
-    }
-
-    @PostMapping("/Person")
+    @PostMapping("/person")
     Person newPerson(@RequestBody Person newPerson) {
         return repository.save(newPerson);
     }
@@ -61,7 +61,6 @@ public class PersonController {
                 .map(Person -> {
                     Person.setName(newPerson.getName());
                     Person.setEmail(newPerson.getEmail());
-                    Person.setDob(LocalDate.now());
                     return repository.save(Person);
                 })
                 .orElseGet(() -> {

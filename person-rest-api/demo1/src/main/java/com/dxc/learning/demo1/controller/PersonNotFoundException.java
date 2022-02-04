@@ -1,8 +1,8 @@
 package com.dxc.learning.demo1.controller;
 
-public class PersonNotFoundException extends RuntimeException {
-    PersonNotFoundException(Integer id) {
-        super("Could not find Person " + id);
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-    }
+@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Person not found")
+public class PersonNotFoundException extends RuntimeException {
 }
